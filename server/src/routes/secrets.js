@@ -38,6 +38,31 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.get('/', async (req, res) => {
+  try {
+    const secrets = await Secret.find({ userId: req.user.id })
+      .select('_id title password createdAt updatedAt')
+      .sort({ createdAt: -1 });
+
+    res.json({
+      count: secrets.length,
+      secrets: secrets.map(secret => ({
+        id: secret._id,
+        title: secret.title,
+        password: secret.password,
+        createdAt: secret.createdAt,
+        updatedAt: secret.updatedAt
+      }))
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error fetching secrets',
+      error: error.message
+    });
+  }
+});
+
 router.get("/:id", validateObjectId, async (req, res) => {
   try {
     const { id } = req.params;
