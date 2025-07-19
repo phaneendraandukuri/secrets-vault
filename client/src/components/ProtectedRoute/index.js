@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom';
+import { getToken, isTokenExpired } from '../../utils/auth';
 
 export default function ProtectedRoute({ children }) {
-  const token = localStorage.getItem('access_token');
-
-  return token ? children : <Navigate to="/" />;
+  const token = getToken();
+  return token && !isTokenExpired(token) ? children : <Navigate to="/" replace />;
 }

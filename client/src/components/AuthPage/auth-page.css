@@ -185,7 +185,6 @@
   color: #0056b3;
 }
 
-/* Responsive Design */
 @media (max-width: 480px) {
   .auth-container {
     padding: 16px;
@@ -200,6 +199,6 @@
   }
   
   .form-input {
-    font-size: 16px; /* Prevents zoom on iOS */
+    font-size: 16px;
   }
 }
