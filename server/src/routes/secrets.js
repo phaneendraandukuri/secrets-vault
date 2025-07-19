@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+const validateObjectId = require('../middleware/validateObjectId');
 const Secret = require('../models/Secret.js');
 
 router.post('/', async (req, res) => {
@@ -38,11 +38,14 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", validateObjectId, async (req, res) => {
   try {
     const { id } = req.params;
 
-    const secret = await Secret.findById(id);
+    const secret = await Secret.findOne({
+      _id: id,
+      userId: req.user.id
+    });
 
     if (!secret) {
       return res.status(404).json({
@@ -63,9 +66,9 @@ router.get("/:id", async (req, res) => {
       error: error.message
     });
   }
-})
+});
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', validateObjectId, async (req, res) => {
   try {
     const { id } = req.params;
     const { title, password } = req.body;
@@ -76,9 +79,11 @@ router.put('/:id', async (req, res) => {
       });
     }
 
-
-    const updatedSecret = await Secret.findByIdAndUpdate(
-      id,
+    const updatedSecret = await Secret.findOneAndUpdate(
+      {
+        _id: id,
+        userId: req.user.id
+      },
       {
         title,
         password,
@@ -113,7 +118,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', validateObjectId, async (req, res) => {
   try {
     const { id } = req.params;
 
