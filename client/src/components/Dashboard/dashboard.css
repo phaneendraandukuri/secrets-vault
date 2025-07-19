@@ -14,25 +14,11 @@
   color: #333;
 }
 
-.dashboard-header .user-info {
+.dashboard-header .header-right-section {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1rem;
-}
-
-.dashboard-header .logout-btn {
-  background-color: #ff6b6b;
-  border: none;
-  color: white;
-  padding: 8px 14px;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.dashboard-header .logout-btn:hover {
-  background-color: #e64444;
 }
 
 
@@ -40,16 +26,16 @@ main {
   padding: 2rem;
 }
 
-.add-secret-btn {
-  padding: 10px 16px;
+.add-secret-btn, .logout-btn {
+  padding: 12px;
   background-color: #007bff;
   color: white;
-  font-weight: 500;
   border: none;
   border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  margin-bottom: 1.5rem;
 }
 
 .add-secret-btn:hover {
@@ -59,5 +45,5 @@ main {
 .user-email{
   text-transform: capitalize;
   font-weight: bold;
-  padding-right: 8px;
+  font-size: 18px;
 }

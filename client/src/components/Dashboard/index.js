@@ -54,9 +54,9 @@ export default function Dashboard() {
     <div className="dashboard">
       <header className="dashboard-header">
         <h1>Secrets Vault</h1>
-        <div>
-          <span className='user-email'>{user?.email}</span>
-          <button onClick={handleLogout}>Logout</button>
+        <div className='header-right-section'>
+          <p className='user-email'>{user?.email}</p>
+          <button className='logout-btn' onClick={handleLogout}>Logout</button>
         </div>
       </header>
 
