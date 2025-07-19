@@ -1,12 +1,23 @@
-import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AuthPage from './AuthPage';
+import Dashboard from './Dashboard.js';
+import ProtectedRoute from './ProtectedRoute';
 
 function App() {
   return (
-    <div className="App">
-      <h1>Welcome to Secret Vauld</h1>
-      <AuthPage />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<AuthPage />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

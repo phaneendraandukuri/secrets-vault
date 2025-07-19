@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { LOGIN_API_ENDPOINT, REGISTER_API_ENDPOINT } from './constants';
+
 import './auth-page.css'
 
 export default function AuthPage() {
@@ -9,6 +12,12 @@ export default function AuthPage() {
     email: '',
     password: ''
   });
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    if (token) navigate('/dashboard');
+  }, []);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -17,11 +26,30 @@ export default function AuthPage() {
     });
   };
 
-  const handleSubmit = () => {
-    if (activeTab === 'login') {
-      console.log('Login:', { email: formData.email, password: formData.password });
-    } else {
-      console.log('Register:', formData);
+  const handleSubmit = async () => {
+    const endpoint = activeTab === 'login' ? LOGIN_API_ENDPOINT : REGISTER_API_ENDPOINT;
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Something went wrong!');
+      }
+
+      localStorage.setItem('access_token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      navigate('/dashboard');
+
+    } catch (error) {
+      console.error('Auth error:', error.message);
     }
   };
 
