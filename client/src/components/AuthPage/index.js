@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LOGIN_API_ENDPOINT, REGISTER_API_ENDPOINT } from './constants';
+import { LOGIN_API_ENDPOINT, REGISTER_API_ENDPOINT } from '../../constants';
 
 import './auth-page.css'
 

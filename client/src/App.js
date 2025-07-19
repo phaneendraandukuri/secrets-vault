@@ -1,7 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import AuthPage from './AuthPage';
-import Dashboard from './Dashboard.js';
-import ProtectedRoute from './ProtectedRoute';
+import { AuthPage, Dashboard, ProtectedRoute } from './components';
 
 function App() {
   return (
