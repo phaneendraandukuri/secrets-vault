@@ -11,6 +11,8 @@ export default function AuthPage() {
     email: '',
     password: ''
   });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,10 +25,19 @@ export default function AuthPage() {
       ...formData,
       [e.target.name]: e.target.value
     });
+    setError('');
   };
 
   const handleSubmit = async () => {
     const endpoint = activeTab === 'login' ? LOGIN_API_ENDPOINT : REGISTER_API_ENDPOINT;
+
+    if (!formData.email || !formData.password) {
+      setError('Both email and password are required.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
 
     try {
       const response = await fetch(endpoint, {
@@ -48,13 +59,16 @@ export default function AuthPage() {
       navigate('/dashboard');
 
     } catch (error) {
-      console.error('Auth error:', error.message);
+      setError(error.message || 'An error occurred. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   const resetForm = () => {
     setFormData({ email: '', password: '' });
     setShowPassword(false);
+    setError('');
   };
 
   const switchTab = (tab) => {
@@ -91,7 +105,6 @@ export default function AuthPage() {
                 : 'Please fill in your information'}
             </p>
           </div>
-
           <div>
             <div className="form-group">
               <label className="form-label">Email Address</label>
@@ -127,12 +140,14 @@ export default function AuthPage() {
                 </button>
               </div>
             </div>
+            {error && <div className="error-message">{error}</div>}
 
             <button
               onClick={handleSubmit}
               className="submit-btn"
+              disabled={loading}
             >
-              {activeTab === 'login' ? 'Sign In' : 'Create Account'}
+              {loading ? 'Please wait...' : activeTab === 'login' ? 'Sign In' : 'Create Account'}
             </button>
           </div>
         </div>

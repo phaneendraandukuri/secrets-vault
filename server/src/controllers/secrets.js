@@ -128,6 +128,7 @@ const updateSecretById = async (req, res) => {
       secret: {
         id: updatedSecret._id,
         title: updatedSecret.title,
+        password: updatedSecret.password,
         createdAt: updatedSecret.createdAt,
         updatedAt: updatedSecret.updatedAt
       }

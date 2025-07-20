@@ -185,6 +185,13 @@
   color: #0056b3;
 }
 
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+
 @media (max-width: 480px) {
   .auth-container {
     padding: 16px;

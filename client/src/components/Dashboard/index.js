@@ -99,9 +99,10 @@ export default function Dashboard() {
 
         if (response.ok) {
           const updatedSecrets = secrets.map((s) =>
-            s.id === id ? { ...s, content: updatedContent } : s
+            s.id === id ? { ...s, password: updatedContent } : s
           );
-          setSecrets(updatedSecrets);
+          setSecrets([...updatedSecrets]);
+          localStorage.setItem('secrets', JSON.stringify(updatedSecrets));
         } else {
           console.error('Failed to update secret');
         }
