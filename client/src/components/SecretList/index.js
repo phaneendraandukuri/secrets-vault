@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import "./secret-list.css"
+import './secret-list.css';
 
 export default function SecretList({ secrets, onEdit, onDelete }) {
   const [visibleIds, setVisibleIds] = useState([]);
@@ -10,17 +10,24 @@ export default function SecretList({ secrets, onEdit, onDelete }) {
     );
   };
 
+  const confirmDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this secret?")) {
+      onDelete(id);
+    }
+  };
+
   return (
     <ul className="secret-list">
       {secrets.map((secret) => (
         <li key={secret.id} className="secret-item">
-          <span className="secret-content">
-            {visibleIds.includes(secret.id) ? secret.content : '•'.repeat(secret.content.length)}
-          </span>
+          <div className='secret-container'>
+            <span className='secret-title'>{secret.title}</span>
+            <span className="secret-content">{visibleIds.includes(secret.id) ? secret.password : '•'.repeat(secret.password.length)}</span>
+          </div>
           <div className="actions">
             <button onClick={() => toggleVisibility(secret.id)}>👁</button>
             <button onClick={() => onEdit(secret.id)}>✏️</button>
-            <button onClick={() => onDelete(secret.id)}>🗑</button>
+            <button onClick={() => confirmDelete(secret.id)}>🗑</button>
           </div>
         </li>
       ))}

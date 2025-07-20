@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getUser, logout } from '../../utils/auth';
+import { getToken, getUser, logout } from '../../utils/auth';
 import AddSecretModal from '../AddSecretModal';
 import SecretList from '../SecretList';
 import './dashboard.css'
@@ -10,43 +10,124 @@ export default function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();
   const user = getUser();
+  const token = getToken();
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem('secrets') || '[]');
-    setSecrets(stored.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
-  }, []);
+    const fetchSecrets = async () => {
+      try {
+        const response = await fetch('http://localhost:5001/api/secrets', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setSecrets(data.secrets);
+        } else {
+          console.error('Failed to fetch secrets');
+        }
+      } catch (error) {
+        console.error('Error fetching secrets:', error);
+      }
+    };
+
+    if (token) {
+      fetchSecrets();
+    }
+  }, [token]);
 
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
-  const handleAddSecret = (content) => {
+  const handleAddSecret = async (title, content) => {
     const newSecret = {
-      id: crypto.randomUUID(),
-      content,
-      createdAt: new Date().toISOString(),
+      title,
+      password: content,
     };
-    const updated = [newSecret, ...secrets];
-    setSecrets(updated);
-    localStorage.setItem('secrets', JSON.stringify(updated));
+
+    try {
+      const response = await fetch('http://localhost:5001/api/secrets', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(newSecret),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setSecrets((prevSecrets) => [
+          ...prevSecrets,
+          {
+            id: data.secret.id,
+            title: data.secret.title,
+            password: data.secret.password,
+          },
+        ])
+
+      } else {
+        console.error('Failed to add secret');
+      }
+    } catch (error) {
+      console.error('Error adding secret:', error);
+    }
   };
 
-  const handleDeleteSecret = (id) => {
-    const updated = secrets.filter((s) => s.id !== id);
-    setSecrets(updated);
-    localStorage.setItem('secrets', JSON.stringify(updated));
-  };
-
-  const handleEditSecret = (id) => {
+  const handleEditSecret = async (id) => {
     const current = secrets.find((s) => s.id === id);
     const updatedContent = prompt('Edit secret:', current.content);
     if (updatedContent !== null) {
-      const updated = secrets.map((s) =>
-        s.id === id ? { ...s, content: updatedContent } : s
-      );
-      setSecrets(updated);
-      localStorage.setItem('secrets', JSON.stringify(updated));
+      const updatedSecret = {
+        title: current.title,
+        password: updatedContent,
+      };
+
+      try {
+        const response = await fetch(`http://localhost:5001/api/secrets/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(updatedSecret),
+        });
+
+        if (response.ok) {
+          const updatedSecrets = secrets.map((s) =>
+            s.id === id ? { ...s, content: updatedContent } : s
+          );
+          setSecrets(updatedSecrets);
+        } else {
+          console.error('Failed to update secret');
+        }
+      } catch (error) {
+        console.error('Error updating secret:', error);
+      }
+    }
+  };
+
+  const handleDeleteSecret = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:5001/api/secrets/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+      });
+
+      if (response.ok) {
+        const updatedSecrets = secrets.filter((secret) => secret.id !== id);
+        setSecrets(updatedSecrets);
+      } else {
+        console.error('Failed to delete secret');
+      }
+    } catch (error) {
+      console.error('Error deleting secret:', error);
     }
   };
 
@@ -54,9 +135,9 @@ export default function Dashboard() {
     <div className="dashboard">
       <header className="dashboard-header">
         <h1>Secrets Vault</h1>
-        <div className='header-right-section'>
-          <p className='user-email'>{user?.email}</p>
-          <button className='logout-btn' onClick={handleLogout}>Logout</button>
+        <div className="header-right-section">
+          <p className="user-email">{user?.email}</p>
+          <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
       </header>
 
@@ -65,11 +146,13 @@ export default function Dashboard() {
           + Add Secret
         </button>
 
-        <SecretList
-          secrets={secrets}
-          onEdit={handleEditSecret}
-          onDelete={handleDeleteSecret}
-        />
+        {secrets.length > 0 && (
+          <SecretList
+            secrets={secrets}
+            onEdit={handleEditSecret}
+            onDelete={handleDeleteSecret}
+          />
+        )}
 
         <AddSecretModal
           isOpen={modalOpen}

@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+require('dotenv').config({ quiet: true });
 
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 

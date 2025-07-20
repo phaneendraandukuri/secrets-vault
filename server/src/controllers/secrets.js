@@ -23,6 +23,7 @@ const addNewSecret = async (req, res) => {
       secret: {
         id: secret._id,
         title: secret.title,
+        password: secret.password,
         createdAt: secret.createdAt
       }
     });
