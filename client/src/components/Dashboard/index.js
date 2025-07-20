@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getToken, getUser, logout } from '../../utils/auth';
-import AddSecretModal from '../AddSecretModal';
-import SecretList from '../SecretList';
+import { SECRETS_API_ENDPOINT } from '../../constants';
+import { SecretList, AddSecretModal } from '..';
+
 import './dashboard.css'
 
 export default function Dashboard() {
@@ -15,7 +16,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchSecrets = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/secrets', {
+        const response = await fetch(SECRETS_API_ENDPOINT, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
@@ -50,7 +51,7 @@ export default function Dashboard() {
     };
 
     try {
-      const response = await fetch('http://localhost:5001/api/secrets', {
+      const response = await fetch(SECRETS_API_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -88,7 +89,7 @@ export default function Dashboard() {
       };
 
       try {
-        const response = await fetch(`http://localhost:5001/api/secrets/${id}`, {
+        const response = await fetch(`${SECRETS_API_ENDPOINT}/${id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -114,7 +115,7 @@ export default function Dashboard() {
 
   const handleDeleteSecret = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5001/api/secrets/${id}`, {
+      const response = await fetch(`${SECRETS_API_ENDPOINT}/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -137,7 +138,7 @@ export default function Dashboard() {
       <header className="dashboard-header">
         <h1>Secrets Vault</h1>
         <div className="header-right-section">
-          <p className="user-email">{user?.email}</p>
+          <p className="user-email">{user?.name}</p>
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
       </header>
@@ -147,13 +148,13 @@ export default function Dashboard() {
           + Add Secret
         </button>
 
-        {secrets.length > 0 && (
+        {secrets.length > 0 ? (
           <SecretList
             secrets={secrets}
             onEdit={handleEditSecret}
             onDelete={handleDeleteSecret}
           />
-        )}
+        ) : <p>No Secrets to show</p>}
 
         <AddSecretModal
           isOpen={modalOpen}

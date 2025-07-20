@@ -8,6 +8,7 @@ export default function AuthPage() {
   const [activeTab, setActiveTab] = useState('login');
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
     password: ''
   });
@@ -66,7 +67,7 @@ export default function AuthPage() {
   };
 
   const resetForm = () => {
-    setFormData({ email: '', password: '' });
+    setFormData({ name: '', email: '', password: '' });
     setShowPassword(false);
     setError('');
   };
@@ -106,6 +107,20 @@ export default function AuthPage() {
             </p>
           </div>
           <div>
+            {activeTab === 'register' && (
+              <div className="form-group">
+                <label className="form-label">Full Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="Enter your full name"
+                  required
+                />
+              </div>
+            )}
             <div className="form-group">
               <label className="form-label">Email Address</label>
               <input

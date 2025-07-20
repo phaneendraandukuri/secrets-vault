@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./add-secret-modal.css"
+import "./add-secret-modal.css";
 
 export default function AddSecretModal({ isOpen, onClose, onAdd }) {
   const [title, setTitle] = useState('');
@@ -36,6 +36,9 @@ export default function AddSecretModal({ isOpen, onClose, onAdd }) {
         <div className="modal-actions">
           <button onClick={handleAdd} className="save-btn">Save</button>
           <button onClick={onClose} className="cancel-btn">Cancel</button>
+        </div>
+        <div className="modal-info">
+          <p>Secrets are encrypted and only readable by you</p>
         </div>
       </div>
     </div>

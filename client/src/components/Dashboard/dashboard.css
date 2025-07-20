@@ -37,6 +37,9 @@ main {
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
+.add-secret-btn{
+  margin-bottom: 12px;
+}
 
 .add-secret-btn:hover {
   background-color: #0056b3;
